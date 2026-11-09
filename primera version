@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSDOI - Screening Diagnóstico y Orientación Inclusiva | UNIMINUTO</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        uniminuto: {
+                            50: '#eef6fc',
+                            100: '#d9ecf9',
+                            500: '#004c98',
+                            600: '#003d7a',
+                            700: '#002e5c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Alto contraste extremo WCAG 2.1 AA */
+        body.high-contrast {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+        }
+        body.high-contrast * {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+            border-color: #ffff00 !important;
+        }
+        body.high-contrast button, body.high-contrast input, body.high-contrast select {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        /* Modo Sepia / Descanso Visual */
+        body.sepia-mode {
+            background-color: #FBF0D9 !important;
+            color: #433422 !important;
+        }
+        body.sepia-mode .bg-white, body.sepia-mode .bg-slate-50, body.sepia-mode .bg-uniminuto-50 {
+            background-color: #F4E4C1 !important;
+            color: #433422 !important;
+            border-color: #D8C29D !important;
+        }
+        /* Focus styles for keyboard navigation */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus {
+            outline: 4px solid #004c98 !important;
+            outline-offset: 2px !important;
+        }
+        body.high-contrast *:focus {
+            outline: 4px solid #ffff00 !important;
+            outline-offset: 2px !important;
+        }
+        @media print {
+            header, footer, button, #professional-modal, #student-report-actions, #modal-student-report, .no-print, #delete-modal, #analytics-modal {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            #view-start, #view-quiz, #view-results, #view-professional-dashboard {
+                display: block !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            body.printing-clean-test #modal-student-report {
+                display: none !important;
+            }
+            body.printing-piar #main-content {
+                display: none !important;
+            }
+            body.printing-piar #modal-student-report {
+                display: block !important;
+                position: static !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col transition-colors duration-300" id="main-body">
+
+    <!-- BARRA DE ACCESIBILIDAD Y NAVEGACIÓN SUPERIOR -->
+    <header class="bg-uniminuto-600 text-white shadow-md sticky top-0 z-50 no-print" role="banner">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('start')" role="button" tabindex="0" aria-label="Ir al inicio del cuestionario PSDOI">
+                <div class="bg-white text-uniminuto-600 font-extrabold px-3 py-1.5 rounded-lg text-lg tracking-wider shadow">
+                    UNIMINUTO
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold leading-tight" id="main-title">PSDOI - Screening Diagnóstico y Orientación Inclusiva</h1>
+                    <p class="text-xs text-slate-200">Área Accesible e Incluyente</p>
+                </div>
+            </div>
+
+            <div class="flex items-center flex-wrap gap-2.5" role="region" aria-label="Controles institucionales y accesibilidad">
+                <button onclick="printCleanTestPDF()" 
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 focus:ring-4 focus:ring-emerald-300"
+                    aria-label="Imprimir o descargar la prueba completa en PDF">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Imprimir Prueba (PDF)</span>
+                </button>
+
+                <button onclick="openProfessionalPortalModal()" 
+                    class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 focus:ring-4 focus:ring-amber-300"
+                    aria-label="Acceso exclusivo para docentes y profesionales al panel de reportes">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span>Reportes Profesionales (PIN)</span>
+                </button>
+
+                <div class="relative">
+                    <button onclick="toggleAccessibilityMenu()" id="accessibility-menu-btn"
+                        class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition flex items-center gap-2 focus:ring-4 focus:ring-purple-300"
+                        aria-expanded="false" aria-haspopup="true">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                        <span>Accesibilidad</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+
+                    <div id="accessibility-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 text-slate-800 z-50 space-y-3">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Opciones Visuales</div>
+                        <button onclick="toggleContrast();" class="w-full text-left bg-slate-900 hover:bg-black text-yellow-400 text-xs font-semibold px-3 py-2.5 rounded-xl transition flex items-center gap-2">
+                            <span>⚡ Alto Contraste (Negro/Amarillo)</span>
+                        </button>
+                        <button onclick="toggleSepia();" class="w-full text-left bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-semibold px-3 py-2.5 rounded-xl transition flex items-center gap-2">
+                            <span>☕ Modo Sepia / Descanso Visual</span>
+                        </button>
+                        <div class="pt-1 border-t border-slate-100 px-1">
+                            <span class="block text-xs font-semibold text-slate-600 mb-1.5">Tamaño de Tipografía (<span id="font-size-indicator">100%</span>)</span>
+                            <div class="flex items-center justify-between gap-2">
+                                <button onclick="adjustFontSize(-1)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-1.5 rounded-lg text-xs transition text-center">A-</button>
+                                <button onclick="adjustFontSize(1)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-1.5 rounded-lg text-xs transition text-center">A+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MODAL DE ACCESO PROFESIONAL CON PIN -->
+    <div id="professional-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-100 text-amber-700 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 text-lg">Acceso Docente y Profesional</h3>
+                        <p class="text-xs text-slate-500">Área Accesible e Incluyente UNIMINUTO</p>
+                    </div>
+                </div>
+                <button onclick="closeProfessionalPortalModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl p-1">&times;</button>
+            </div>
+            
+            <p class="text-sm text-slate-600">
+                Ingrese el PIN institucional de seguridad para acceder al panel general con los resultados, datos socioeconómicos, tiempos y análisis PIAR fundamentado en APA (Decreto 1421, ONU 2006, Piaget, Palacios 2008).
+            </p>
+
+            <form onsubmit="verifyProfessionalPin(event)" class="space-y-4">
+                <div>
+                    <label for="modal-prof-pin" class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN Institucional</label>
+                    <input type="password" id="modal-prof-pin" required autocomplete="current-password" placeholder="••••••••••••"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-uniminuto-500 text-slate-800 bg-slate-50 text-sm">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeProfessionalPortalModal()" class="px-5 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">Cancelar</button>
+                    <button type="submit" class="px-6 py-2.5 bg-uniminuto-600 text-white font-bold rounded-xl text-sm shadow">Ingresar al Panel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE ELIMINACIÓN SEGURA -->
+    <div id="delete-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-extrabold text-rose-700 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Eliminar Registro Estudiantil
+                </h3>
+                <button onclick="closeDeleteModal()" class="text-slate-400 font-bold text-lg">&times;</button>
+            </div>
+            <p class="text-xs text-slate-600">Esta acción es irreversible y requiere autorización institucional.</p>
+            <form onsubmit="confirmDeleteRecord(event)" class="space-y-3">
+                <input type="hidden" id="delete-record-index">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Nombre del Profesional *</label>
+                    <input type="text" id="del-prof-name" required placeholder="Ej. Dr. Andrés Martínez" class="w-full text-xs p-2.5 rounded border bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Motivo Fundamentado *</label>
+                    <textarea id="del-reason" required rows="2" placeholder="Ej. Duplicidad de registro..." class="w-full text-xs p-2.5 rounded border bg-slate-50"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">PIN Institucional *</label>
+                    <input type="password" id="del-password" required placeholder="••••••••••••" class="w-full text-xs p-2.5 rounded border bg-slate-50">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded text-xs shadow">Autorizar y Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ANALÍTICA DE SEDE -->
+    <div id="analytics-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h3 class="text-xl font-extrabold text-slate-900">📊 Dashboard Institucional de Sede (MEN)</h3>
+                <button onclick="document.getElementById('analytics-modal').classList.add('hidden')" class="text-slate-400 font-bold text-xl p-1">&times;</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center">
+                    <p class="text-3xl font-black text-blue-900" id="stat-total">0</p>
+                    <p class="text-xs font-bold text-blue-700 mt-1 uppercase">Evaluados Totales</p>
+                </div>
+                <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 text-center">
+                    <p class="text-3xl font-black text-rose-900" id="stat-mental">0%</p>
+                    <p class="text-xs font-bold text-rose-700 mt-1 uppercase">Sol. Salud Mental</p>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
+                    <p class="text-3xl font-black text-amber-900" id="stat-night">0%</p>
+                    <p class="text-xs font-bold text-amber-700 mt-1 uppercase">Nocturna / Laboral</p>
+                </div>
+            </div>
+            <div class="flex justify-end pt-4">
+                <button onclick="document.getElementById('analytics-modal').classList.add('hidden')" class="px-5 py-2.5 bg-slate-800 text-white font-bold rounded-xl text-sm">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA VER EL REPORTE PIAR CON MARCO APA -->
+    <div id="modal-student-report" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full p-6 sm:p-8 space-y-6 my-8 max-h-[90vh] overflow-y-auto relative">
+            <div class="flex items-center justify-between border-b pb-4 no-print">
+                <div>
+                    <span class="bg-uniminuto-50 text-uniminuto-600 font-semibold px-3 py-1 rounded-full text-xs">Vista Profesional • UNIMINUTO</span>
+                    <h3 class="text-xl font-extrabold text-slate-900 mt-1">Concepto Guiado de Ajustes Razonables (PIAR) y Marco APA</h3>
+                </div>
+                <button onclick="closeStudentReportModal()" class="text-slate-400 font-bold text-2xl p-1">&times;</button>
+            </div>
+            <div id="modal-report-content" class="space-y-6"></div>
+            <div class="flex justify-end gap-3 pt-4 border-t no-print">
+                <button onclick="printPiarConcept()" class="px-5 py-2.5 bg-uniminuto-600 hover:bg-uniminuto-700 text-white font-bold rounded-xl text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Descargar / Imprimir Concepto PIAR (PDF)</span>
+                </button>
+                <button onclick="closeStudentReportModal()" class="px-5 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="main-content" class="flex-grow max-w-5xl w-full mx-auto px-4 py-8" role="main">
+
+        <div id="printable-full-test" class="space-y-6">
+
+            <!-- VISTA 0: INICIO Y CONSENTIMIENTO -->
+            <section id="view-start" class="bg-white rounded-3xl shadow-xl p-8 sm:p-12 border border-slate-200 space-y-8">
+                <div class="max-w-3xl mx-auto text-center space-y-4">
+                    <div class="inline-flex items-center gap-2 bg-uniminuto-50 text-uniminuto-600 font-bold px-4 py-1.5 rounded-full text-xs uppercase border">
+                        Corporación Universitaria Minuto de Dios • UNIMINUTO
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Screening Diagnóstico y Orientación Inclusiva (PSDOI)
+                    </h2>
+                    <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+                        Área Accesible e Incluyente • Plataforma Oficial de Tamizaje y Ajustes Razonables (PIAR).
+                    </p>
+                </div>
+
+                <div class="max-w-3xl mx-auto space-y-3 text-left">
+                    <details class="group bg-blue-50 border border-blue-200 rounded-xl overflow-hidden cursor-pointer" open>
+                        <summary class="font-bold text-uniminuto-700 p-4 flex justify-between items-center select-none">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                📜 Consentimiento Informado y Guía de Uso del Lector de Voz
+                            </span>
+                            <svg class="w-5 h-5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <div class="p-4 pt-0 text-sm text-slate-700 border-t border-blue-100 bg-white space-y-3 mt-2">
+                            <p><strong>Propósito Exclusivo:</strong> Identificar tus fortalezas de aprendizaje, patrones de lectura y factores de bienestar socioemocional.</p>
+                            <p class="text-red-700 font-bold">Aviso de No Evaluabilidad Académica: Este instrumento NO tiene ningún valor cuantitativo, NO representa un examen de admisión, NO otorga notas ni constituye una prueba aprobatoria o reprobatoria.</p>
+                            
+                            <div class="bg-purple-50 p-3 rounded-lg border border-purple-200 text-xs text-purple-950 space-y-1">
+                                <p class="font-bold uppercase tracking-wider">🎧 Guía del Lector de Voz (TTS) y Controles Interactivos:</p>
+                                <p>• <strong>1 Toque en "🔊 Escuchar Módulo":</strong> Inicia la lectura completa de las preguntas y opciones del módulo.</p>
+                                <p>• <strong>Botón Pausa / Reanudar:</strong> Detiene o continúa la locución en el momento exacto.</p>
+                                <p>• <strong>Comando con Tecla M:</strong> 1 pulsación lee el módulo, 2 pulsaciones repiten y 3 pulsaciones avanzan al siguiente apartado automáticamente.</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="max-w-md mx-auto pt-4 text-center space-y-4">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition text-left">
+                        <input type="checkbox" id="consent-check" class="mt-1 w-5 h-5 text-uniminuto-600 rounded focus:ring-uniminuto-500">
+                        <span class="text-sm font-medium text-slate-700 select-none">
+                            He leído y acepto el consentimiento informado y las instrucciones del lector de voz.
+                        </span>
+                    </label>
+                    <p id="consent-error" class="hidden text-xs font-bold text-red-600">⚠️ Debes marcar la casilla para aceptar el consentimiento e iniciar la prueba.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="handleStartWithConsent()" 
+                            class="flex-1 py-4 px-6 bg-uniminuto-600 hover:bg-uniminuto-700 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                            <span>Iniciar Prueba</span>
+                        </button>
+                        <button id="btn-resume-quiz" onclick="resumeAssessment()" 
+                            class="hidden flex-1 py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                            <span>Reanudar Prueba</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA 1: CUESTIONARIO -->
+            <section id="view-quiz" class="hidden space-y-6">
+                <div class="bg-blue-50 border-l-4 border-uniminuto-500 p-4 rounded-r-xl shadow-sm text-sm text-slate-700 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+                    <div>
+                        <span class="font-bold text-uniminuto-700">Lector de Voz Accesible (Teclado):</span>
+                        <span>Presiona la tecla <strong>M</strong> (1 vez lee, 2 repite, 3 avanza). Usa el botón de abajo para pausar con 1 solo toque.</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="playCurrentModuleSpeech()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                            <span>🔊 Escuchar Módulo (o M)</span>
+                        </button>
+                        <button onclick="togglePauseSpeech()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
+                            <span>⏸️ Pausa / Reanudar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-uniminuto-600 uppercase tracking-wider" id="module-badge">Módulo 1 de 5</span>
+                        <h2 id="quiz-heading" class="text-lg sm:text-xl font-extrabold text-slate-900">Cargando...</h2>
+                        <span id="module-5-tag" class="hidden mt-1 bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-md border border-amber-300">
+                            💙 No Calificable - Apoyo de Bienestar y Salud Mental
+                        </span>
+                    </div>
+                    <div class="w-24 sm:w-32 bg-slate-200 h-3 rounded-full overflow-hidden">
+                        <div id="progress-fill" class="bg-uniminuto-600 h-full transition-all duration-300" style="width: 20%;"></div>
+                    </div>
+                </div>
+
+                <div id="questions-container" class="space-y-6"></div>
+
+                <div class="flex items-center justify-between pt-4">
+                    <button id="btn-prev" onclick="changeModule(-1)" class="px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl disabled:opacity-50">← Anterior</button>
+                    <button id="btn-next" onclick="changeModule(1)" class="px-6 py-3 bg-uniminuto-600 text-white font-bold rounded-xl shadow">Siguiente →</button>
+                    <button id="btn-to-register" onclick="proceedToRegister()" class="hidden px-8 py-3.5 bg-emerald-600 text-white font-bold rounded-xl shadow">Finalizar Prueba</button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- VISTA 2: FORMULARIO DE REGISTRO CON PROGRAMA ACADÉMICO -->
+        <section id="view-welcome" class="hidden bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-slate-200">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-3">
+                    <span class="inline-block bg-emerald-50 text-emerald-600 font-semibold px-4 py-1.5 rounded-full text-sm border">
+                        ¡Cuestionario completado exitosamente!
+                    </span>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Formulario de Registro y Programa Académico</h2>
+                </div>
+
+                <form id="form-student" onsubmit="submitAssessment(event)" class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold uppercase mb-1">Nombre Completo *</label><input type="text" id="student-name" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white"></div>
+                        <div><label class="block text-xs font-bold uppercase mb-1">Edad *</label><input type="number" id="student-age" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white"></div>
+                        <div><label class="block text-xs font-bold uppercase mb-1">ID Estudiantil / Cédula *</label><input type="text" id="student-id" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white"></div>
+                        
+                        <!-- Programa Académico Seleccionable / Personalizado -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold uppercase mb-1">Programa Académico de Pregrado *</label>
+                            <select id="student-program" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white font-semibold">
+                                <option value="">Seleccione su programa de pregrado...</option>
+                                <option value="Ingeniería de Sistemas">Ingeniería de Sistemas (Alta carga cuantitativa)</option>
+                                <option value="Ingeniería Industrial">Ingeniería Industrial (Alta carga cuantitativa)</option>
+                                <option value="Psicología">Psicología (Ciencias sociales y humanas)</option>
+                                <option value="Trabajo Social">Trabajo Social (Ciencias sociales y humanas)</option>
+                                <option value="Administración de Empresas">Administración de Empresas (Cuantitativo y administrativo)</option>
+                                <option value="Contaduría Pública">Contaduría Pública (Cuantitativo y financiero)</option>
+                                <option value="Licenciatura en Educación Infantil">Licenciatura en Educación Infantil (Pedagógico y lectoescritura)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Centro / Sede *</label>
+                            <select id="acad-center" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
+                                <option value="">Seleccione...</option>
+                                <option value="Kennedy">Kennedy</option>
+                                <option value="Perdomo">Perdomo</option>
+                                <option value="Calle 80">Calle 80</option>
+                                <option value="San Camilo">San Camilo</option>
+                                <option value="Uni San Pablo - San Cristóbal Norte">Uni San Pablo - San Cristóbal Norte</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Modalidad *</label>
+                            <select id="acad-modality" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
+                                <option value="Distancia">Distancia</option>
+                                <option value="Virtual">Virtual</option>
+                                <option value="Presencial">Presencial</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Jornada *</label>
+                            <select id="acad-shift" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
+                                <option value="Diurna">Diurna</option>
+                                <option value="Nocturna">Nocturna</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t pt-4">
+                        <div><label class="block text-xs font-bold uppercase mb-1">Zona</label><select id="socio-zone" class="w-full p-2.5 rounded border border-slate-300 bg-white"><option>Urbana</option><option>Rural</option></select></div>
+                        <div><label class="block text-xs font-bold uppercase mb-1">Estrato</label><select id="socio-stratum" class="w-full p-2.5 rounded border border-slate-300 bg-white"><option>Estrato 1</option><option>Estrato 2</option><option>Estrato 3</option><option>Estrato 4+</option></select></div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Ocupación</label>
+                            <select id="socio-work" class="w-full p-2.5 rounded border border-slate-300 bg-white">
+                                <option value="Estudia exclusivamente">Estudia exclusivamente</option>
+                                <option value="Trabaja (Tiempo parcial)">Trabaja (Tiempo parcial)</option>
+                                <option value="Trabaja (Tiempo completo)">Trabaja (Tiempo completo)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Dispositivo</label>
+                            <select id="socio-device" class="w-full p-2.5 rounded border border-slate-300 bg-white">
+                                <option value="Propio">Computador propio estable</option>
+                                <option value="Compartido">Computador compartido</option>
+                                <option value="Celular o Salas Uni">Celular o Salas de Universidad</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 pt-4 border-t border-slate-200">
+                        <h3 class="font-extrabold text-slate-900 text-sm">Servicios de Bienestar Estudiantil (Opcional)</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-2 bg-white border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="checkbox" id="wb-mental" class="w-4 h-4 text-blue-600">
+                                <span class="text-sm font-semibold text-slate-700">Deseo acompañamiento psicológico (Salud Mental).</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 bg-white border rounded-lg cursor-pointer hover:bg-emerald-50">
+                                <input type="checkbox" id="wb-physical" class="w-4 h-4 text-emerald-600">
+                                <span class="text-sm font-semibold text-slate-700">Deseo unirme a grupos deportivos o culturales.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="px-8 py-3 bg-uniminuto-600 text-white font-bold rounded-xl shadow-lg">Generar Mi Resultado</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- VISTA 3: RESULTADOS ESTUDIANTE (SIN PUNTAJES NUMÉRICOS) -->
+        <section id="view-results" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-slate-200 space-y-8">
+                <div class="text-center border-b pb-6">
+                    <span class="bg-emerald-100 text-emerald-700 font-bold px-4 py-1.5 rounded-full text-xs uppercase">Proceso Finalizado</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-3">Consigna de Fortalezas y Hábitos Recomendados</h2>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div class="md:col-span-2"><span class="block text-[10px] font-bold text-slate-400 uppercase">Estudiante</span><span id="res-name" class="font-bold text-slate-800">-</span></div>
+                    <div><span class="block text-[10px] font-bold text-slate-400 uppercase">Edad / ID</span><span id="res-age-id" class="font-bold text-slate-800">-</span></div>
+                    <div><span class="block text-[10px] font-bold text-slate-400 uppercase">Sede / Modalidad</span><span id="res-program" class="font-bold text-slate-800">-</span></div>
+                </div>
+                <div class="bg-uniminuto-50 border border-uniminuto-200 p-6 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-uniminuto-900 text-lg">💡 Tus Hábitos Recomendados y Fortalezas</h3>
+                    <div id="student-recommendations-text" class="text-sm text-slate-700 space-y-3"></div>
+                </div>
+                <div class="flex justify-center gap-3 pt-4">
+                    <button onclick="window.print()" class="px-5 py-3 bg-slate-800 text-white font-bold rounded-xl text-sm shadow">🖨️ Guardar Mi Comprobante</button>
+                    <button onclick="openProfessionalPortalModal()" class="px-5 py-3 bg-amber-500 text-slate-900 font-bold rounded-xl text-sm shadow">🔒 Profesionales (PIN)</button>
+                    <button onclick="restartAssessment()" class="px-5 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">Reiniciar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 4: PANEL PROFESIONAL (CON FILTROS Y SEMÁFORO) -->
+        <section id="view-professional-dashboard" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-slate-200 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
+                    <div>
+                        <span class="bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full text-[10px] uppercase">Panel Privado</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-2">Consolidado Institucional PIAR</h2>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="openAnalyticsModal()" class="px-3 py-2 bg-purple-600 text-white font-bold rounded-lg text-xs shadow">📊 Analítica de Sede</button>
+                        <button onclick="exportAllToExcel()" class="px-3 py-2 bg-emerald-600 text-white font-bold rounded-lg text-xs shadow">📗 Excel</button>
+                        <button onclick="switchView('start')" class="px-3 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg text-xs">Inicio</button>
+                    </div>
+                </div>
+
+                <!-- Filtros Sede -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Filtrar Sede</label>
+                        <select id="filter-center" onchange="renderProfessionalDashboardTable()" class="w-full text-xs p-2 rounded border border-slate-300 bg-white">
+                            <option value="ALL">Todas</option>
+                            <option value="Kennedy">Kennedy</option>
+                            <option value="Perdomo">Perdomo</option>
+                            <option value="Calle 80">Calle 80</option>
+                            <option value="San Camilo">San Camilo</option>
+                            <option value="Uni San Pablo - San Cristóbal Norte">Uni San Pablo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Modalidad</label>
+                        <select id="filter-modality" onchange="renderProfessionalDashboardTable()" class="w-full text-xs p-2 rounded border border-slate-300 bg-white">
+                            <option value="ALL">Todas</option>
+                            <option value="Distancia">Distancia</option>
+                            <option value="Virtual">Virtual</option>
+                            <option value="Presencial">Presencial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jornada</label>
+                        <select id="filter-shift" onchange="renderProfessionalDashboardTable()" class="w-full text-xs p-2 rounded border border-slate-300 bg-white">
+                            <option value="ALL">Todas</option>
+                            <option value="Diurna">Diurna</option>
+                            <option value="Nocturna">Nocturna</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Semáforo Riesgo</label>
+                        <select id="filter-risk" onchange="renderProfessionalDashboardTable()" class="w-full text-xs p-2 rounded border border-slate-300 bg-white">
+                            <option value="ALL">Todos los Niveles</option>
+                            <option value="🟢 Estándar">🟢 Estándar</option>
+                            <option value="🟡 Moderado">🟡 Moderado</option>
+                            <option value="🔴 Prioritario">🔴 Prioritario</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-100 text-slate-900 font-bold uppercase">
+                            <tr>
+                                <th class="p-3">Estudiante (ID)</th>
+                                <th class="p-3">Sede / Mod</th>
+                                <th class="p-3 text-center">Puntaje</th>
+                                <th class="p-3">Factor Semáforo</th>
+                                <th class="p-3 text-center">Acciones (Concepto / Eliminar)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-table-body" class="divide-y divide-slate-200 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        const modulesData = [
+            {
+                id: 1,
+                title: "Módulo 1: Comprensión de Lectura y Argumentación Crítica",
+                isScored: true,
+                questions: [
+                    {
+                        id: 1,
+                        text: "Se afirma que 'las universidades deben prohibir la inteligencia artificial porque fomenta el facilismo académico'. ¿Cuál es el contraargumento más sólido desde una perspectiva de pensamiento crítico?",
+                        visualSvg: `
+                            <svg viewBox="0 0 360 170" class="w-full max-w-sm mx-auto bg-amber-50/50 border border-amber-200 rounded-xl p-2 shadow-inner" aria-label="Ilustración conceptual de debate ético sobre IA.">
+                                <rect x="8" y="8" width="344" height="154" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+                                <rect x="25" y="20" width="310" height="45" rx="6" fill="#1e3a8a" />
+                                <text x="40" y="47" font-family="Inter" font-size="11" font-weight="bold" fill="#fef08a">Debate Crítico: Ética y Uso de IA</text>
+                                <circle cx="85" cy="110" r="13" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+                                <path d="M 70 148 Q 85 125 100 148 Z" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
+                                <circle cx="275" cy="110" r="13" fill="#10b981" stroke="#047857" stroke-width="2"/>
+                                <path d="M 260 148 Q 275 125 290 148 Z" fill="#8b5cf6" stroke="#6d28d9" stroke-width="1.5"/>
+                                <rect x="145" y="80" width="70" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                                <text x="160" y="105" font-family="Inter" font-size="12" font-weight="bold" fill="#b45309">Soporte</text>
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "Las universidades no deben prohibir la tecnología porque los estudiantes prefieren usar teléfonos móviles." },
+                            { id: 'b', text: "La prohibición total ignora el potencial de la IA como apoyo y accesibilidad cognitiva; el enfoque pedagógico debe ser enseñar a usarla ética y críticamente.", correct: true },
+                            { id: 'c', text: "Como la inteligencia artificial siempre falla, prohibirla evita corregir trabajos." }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        text: "Se argumenta que 'la educación virtual en la universidad pierde calidad porque no existe una interacción física presencial constante'. ¿Cuál de los siguientes enunciados refuta de manera más lógica la premisa anterior?",
+                        visualSvg: `
+                            <svg viewBox="0 0 360 170" class="w-full max-w-sm mx-auto bg-amber-50/50 border border-amber-200 rounded-xl p-2 shadow-inner" aria-label="Esquema de educación virtual accesible.">
+                                <rect x="8" y="8" width="344" height="154" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+                                <rect x="90" y="25" width="180" height="85" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                                <text x="115" y="55" font-family="Inter" font-size="12" font-weight="bold" fill="#1e40af">Educación Virtual DUA</text>
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "La calidad educativa depende de la mediación pedagógica y del diseño instruccional accesible, no exclusivamente de la presencialidad física.", correct: true },
+                            { id: 'b', text: "Estudiar en casa es mucho más cómodo porque no hay que gastar dinero en transporte público." },
+                            { id: 'c', text: "Como las plataformas digitales a veces se caen, la virtualidad nunca funcionará." }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        text: "En un debate sobre evaluación universitaria, un ponente sostiene: 'Si un estudiante no pasa el examen final en el primer intento, significa que no tiene las capacidades intelectuales'. ¿Qué falacia lógica contiene?",
+                        visualSvg: `
+                            <svg viewBox="0 0 360 170" class="w-full max-w-sm mx-auto bg-amber-50/50 border border-amber-200 rounded-xl p-2 shadow-inner" aria-label="Balanza analítica de falacias lógicas.">
+                                <rect x="8" y="8" width="344" height="154" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+                                <line x1="180" y1="35" x2="180" y2="125" stroke="#b45309" stroke-width="4"/>
+                                <line x1="110" y1="55" x2="250" y2="55" stroke="#d97706" stroke-width="4"/>
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "Ninguno, los exámenes de una sola oportunidad miden perfectamente la inteligencia general." },
+                            { id: 'b', text: "Una generalización apresurada y determinista que ignora los factores metodológicos, emocionales, de ritmo de aprendizaje o barreras de accesibilidad.", correct: true },
+                            { id: 'c', text: "Un error de pronunciación al nombrar las materias del semestre." }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Módulo 2: Gramática, Puntuación y Claridad Lógica",
+                isScored: true,
+                questions: [
+                    {
+                        id: 4,
+                        text: "Texto con error: 'Los estudiantes entregaron el informe a tiempo sin embargo no incluyeron las referencias bibliográficas exigidas por el docente.' ¿Cuáles son los errores implícitos de puntuación y lógica?",
+                        options: [
+                            { id: 'a', text: "El texto está perfectamente escrito y no le falta ninguna puntuación." },
+                            { id: 'b', text: "Falta una coma o punto y coma antes del conector 'sin embargo' para separar adecuadamente las proposiciones coordinadas adversativas.", correct: true },
+                            { id: 'c', text: "Tiene un error en el uso de tildes diacríticas al final de la oración." }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        text: "Texto con error: 'María la delegada del curso organizó la reunión de bienvenida para los nuevos compañeros.' Desde el punto de vista de las reglas de puntuación y sintaxis, ¿qué falta en el fragmento?",
+                        options: [
+                            { id: 'a', text: "Las comas que delimitan la aseveración explicativa o aposición ('la delegada del curso'), ya que interrumpen la oración para dar una aclaración sobre María.", correct: true },
+                            { id: 'b', text: "Un signo de interrogación al inicio de la frase." },
+                            { id: 'c', text: "Cambiar todas las palabras a minúsculas obligatoriamente." }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        text: "Texto con error: 'Aunque el profesor explico la norma APA en clase algunos estudiantes cometieron errores graves en el documento.' ¿Qué fallas de puntuación y estructura lógica presenta este párrafo?",
+                        options: [
+                            { id: 'a', text: "No presenta ningún error; la lectura fluye de manera natural." },
+                            { id: 'b', text: "Falta la tilde en la palabra 'explicó' (cambiando el tiempo verbal) y una coma obligatoria después de la oración subordinada concesiva ('...en clase,').", correct: true },
+                            { id: 'c', text: "Le sobra un punto final en la mitad de la oración." }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Módulo 3: Pensamiento Cuantitativo y Razonamiento Lógico-Espacial",
+                isScored: true,
+                questions: [
+                    {
+                        id: 7,
+                        text: "Para construir una rampa accesible de entrada en la universidad, se requiere que la pendiente forme un ángulo de inclinación seguro que no supere los 10 grados respecto al suelo horizontal. Si un plano arquitectónico muestra que la inclinación es de un ángulo agudo de 8 grados, ¿qué implica esto para la obra?",
+                        visualSvg: `
+                            <svg viewBox="0 0 320 160" class="w-full max-w-xs mx-auto bg-slate-50 border border-slate-200 rounded-lg p-2" aria-label="Diagrama de rampa accesible con ángulo de 8 grados.">
+                                <polygon points="30,130 290,130 290,90" fill="#eef6fc" stroke="#004c98" stroke-width="3" />
+                                <rect x="270" y="110" width="20" height="20" fill="none" stroke="#004c98" stroke-width="2" />
+                                <path d="M 80,130 A 50 50 0 0 0 70,118" fill="none" stroke="#d97706" stroke-width="2.5" />
+                                <text x="85" y="115" font-family="Inter" font-size="13" font-weight="bold" fill="#b45309">8°</text>
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "Que cumple con el estándar seguro de inclinación al ser menor al límite establecido.", correct: true },
+                            { id: 'b', text: "Que la rampa quedó completamente vertical y es imposible de transitar." },
+                            { id: 'c', text: "Que el ángulo se convirtió en un triángulo obtusángulo de 90 grados." }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        text: "Un estudiante necesita organizar su tiempo semanal de estudio: destina la mitad de su jornada a clases presenciales, una cuarta parte a trabajo autónomo y el tiempo restante a descanso y bienestar. Si la jornada total disponible es de 8 horas diarias, ¿cuántas horas dedica exactamente al trabajo autónomo?",
+                        visualSvg: `
+                            <svg viewBox="0 0 320 160" class="w-full max-w-xs mx-auto bg-slate-50 border border-slate-200 rounded-lg p-2" aria-label="Gráfico de distribución de jornada de 8 horas.">
+                                <rect x="30" y="50" width="260" height="40" rx="6" fill="#eef6fc" stroke="#004c98" stroke-width="2" />
+                                <rect x="30" y="50" width="130" height="40" fill="#3b82f6" opacity="0.3" />
+                                <rect x="160" y="50" width="65" height="40" fill="#10b981" opacity="0.3" />
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "4 horas." },
+                            { id: 'b', text: "2 horas.", correct: true },
+                            { id: 'c', text: "6 horas." }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        text: "El presupuesto mensual de fotocopias y materiales impresos para un proyecto inclusivo es de $120.000. Si en la primera semana se gastó la tercera parte de ese presupuesto total, ¿cuánto dinero queda disponible para el resto del mes?",
+                        visualSvg: `
+                            <svg viewBox="0 0 320 160" class="w-full max-w-xs mx-auto bg-slate-50 border border-slate-200 rounded-lg p-2" aria-label="Gráfico circular de presupuesto.">
+                                <circle cx="160" cy="75" r="50" fill="none" stroke="#cbd5e1" stroke-width="20"/>
+                                <circle cx="160" cy="75" r="50" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="104.7 314" stroke-dashoffset="0"/>
+                            </svg>
+                        `,
+                        options: [
+                            { id: 'a', text: "$40.000." },
+                            { id: 'b', text: "$80.000.", correct: true },
+                            { id: 'c', text: "$100.000." }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Módulo 4: Competencia Comunicativa / Inglés Funcional",
+                isScored: true,
+                questions: [
+                    {
+                        id: 10,
+                        text: "Estás configurando tu plataforma virtual institucional y aparece el siguiente aviso: 'Please upload your digital schedule before the deadline to avoid system locks.' ¿Qué acción debes realizar inmediatamente según el texto?",
+                        options: [
+                            { id: 'a', text: "Descargar el programa en inglés de la universidad." },
+                            { id: 'b', text: "Subir el horario digital antes de la fecha límite para evitar bloqueos en el sistema.", correct: true },
+                            { id: 'c', text: "Enviar un correo para solicitar la cancelación de la asignatura." }
+                        ]
+                    },
+                    {
+                        id: 11,
+                        text: "En el campus virtual, encuentras un icono acompañado del siguiente texto descriptivo: 'Click here to access your virtual classroom links and learning resources.' ¿Para qué sirve principalmente este enlace?",
+                        options: [
+                            { id: 'a', text: "Para pagar los recibos de matrícula financiera." },
+                            { id: 'b', text: "Para ver las calificaciones finales del semestre pasado." },
+                            { id: 'c', text: "Para acceder al enlace de tus clases virtuales y recursos de aprendizaje.", correct: true }
+                        ]
+                    },
+                    {
+                        id: 12,
+                        text: "Al ingresar a una base de datos bibliográfica de la universidad, el sistema muestra el siguiente mensaje de advertencia: 'Access denied: Please verify your institutional login credentials.' ¿Qué está indicando el sistema en esta situación?",
+                        options: [
+                            { id: 'a', text: "Que la biblioteca física está cerrada por mantenimiento nocturno." },
+                            { id: 'b', text: "Que el acceso ha sido denegado y se deben verificar las credenciales de inicio de sesión institucional.", correct: true },
+                            { id: 'c', text: "Que tu matrícula académica ha sido cancelada definitivamente." }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Módulo 5: Relaciones Sociales, Estrés, Autocuidado y Regulación Emocional",
+                isScored: false,
+                questions: [
+                    {
+                        id: 5,
+                        text: "Ante una alta carga académica y laboral, ¿cómo gestionas habitualmente tu nivel de tensión y autocuidado?",
+                        options: [
+                            { id: 'a', text: "Organizo prioridades y busco apoyo cuando lo requiero en Bienestar." },
+                            { id: 'b', text: "Siento mucha ansiedad constante que afecta mi ritmo de estudio." },
+                            { id: 'c', text: "Tiendo a aislarme y posponer mis entregas." }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        text: "¿Cómo consideras que es tu red de apoyo emocional con compañeros o familiares frente al estrés universitario?",
+                        options: [
+                            { id: 'a', text: "Sólida y cuento con personas que me escuchan y orientan." },
+                            { id: 'b', text: "Limitada; prefiero resolver todo individualmente aunque me cueste." },
+                            { id: 'c', text: "Ausente o siento que no tengo con quién hablar cuando hay dificultades." }
+                        ]
+                    },
+                    {
+                        id: 7,
+                        text: "Cuando te enfrentas a un proyecto difícil o a una calificación inesperada, ¿cuál suele ser tu reacción emocional principal?",
+                        options: [
+                            { id: 'a', text: "Analizo el error y busco retroalimentación con el docente." },
+                            { id: 'b', text: "Experimento frustración temporal pero logro avanzar con el tiempo." },
+                            { id: 'c', text: "Desmotivación profunda que me hace pensar en abandonar la actividad." }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        text: "Para equilibrar el tiempo entre tus responsabilidades laborales, familiares y académicas, ¿qué estrategia te resulta más útil?",
+                        options: [
+                            { id: 'a', text: "Uso agendas y bloques de tiempo estructurados semanalmente." },
+                            { id: 'b', text: "Intento cumplir con todo sobre la marcha, aunque a veces me agoto." },
+                            { id: 'c', text: "Me siento frecuentemente abrumado/a sin saber por dónde empezar." }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        text: "¿Te gustaría recibir orientación psicológica preventiva o participar en talleres de manejo de ansiedad y técnicas de estudio?",
+                        options: [
+                            { id: 'a', text: "Sí, considero que sería de gran ayuda para mi bienestar y rendimiento." },
+                            { id: 'b', text: "Tal vez más adelante si la carga académica aumenta." },
+                            { id: 'c', text: "No lo considero necesario en este momento." }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let currentModuleIndex = 0;
+        let userAnswers = {};
+        let testStartTime = null;
+        let speechClicksCount = 0;
+        let speechClickTimer = null;
+        
+        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwSsVqIgPYaz2_9_TBYZZ-BtT7G-pM4qpZnWcBbox90clk7sOXrLmafgXkWo3idZ9Ug/exec";
+        
+        async function fetchRecordsFromGoogleSheets() {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL);
+                const data = await response.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    localRecords = data;
+                    localStorage.setItem('psdoi_prof_records', JSON.stringify(localRecords));
+                }
+            } catch (e) {
+                console.warn("Usando datos locales en caché por error de red con Google Sheets:", e);
+            }
+        }
+
+        async function saveRecordToGoogleSheets(rec) {
+            try {
+                await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rec)
+                });
+            } catch (e) {
+                console.error("Error al enviar registro a Google Sheets:", e);
+            }
+        }
+
+        let localRecords = JSON.parse(localStorage.getItem('psdoi_prof_records')) || [
+            {
+                id: "1002938475",
+                name: "Carlos Andrés Rodríguez",
+                age: 22,
+                program: "Ingeniería de Sistemas",
+                center: "Kennedy",
+                modality: "Distancia",
+                shift: "Nocturna",
+                zone: "Urbana",
+                stratum: "Estrato 2",
+                work: "Estudia exclusivamente",
+                wbMental: false,
+                wbPhysical: true,
+                score: 24,
+                risk: "🟢 Estándar",
+                date: new Date().toLocaleString('es-CO')
+            },
+            {
+                id: "1003847562",
+                name: "María Fernanda Gómez",
+                age: 25,
+                program: "Psicología",
+                center: "Calle 80",
+                modality: "Presencial",
+                shift: "Diurna",
+                zone: "Urbana",
+                stratum: "Estrato 1",
+                work: "Trabaja y estudia (Tiempo parcial)",
+                wbMental: true,
+                wbPhysical: false,
+                score: 8,
+                risk: "🔴 Prioritario",
+                date: new Date().toLocaleString('es-CO')
+            }
+        ];
+
+        window.onload = () => {
+            switchView('start');
+            if (localStorage.getItem('psdoi_in_progress')) {
+                document.getElementById('btn-resume-quiz').classList.remove('hidden');
+            }
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key.toLowerCase() === 'm' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                    event.preventDefault();
+                    handleKeySpeechTrigger();
+                }
+            });
+        };
+
+        function toggleAccessibilityMenu() {
+            document.getElementById('accessibility-dropdown').classList.toggle('hidden');
+        }
+        function toggleContrast() { document.body.classList.toggle('high-contrast'); document.body.classList.remove('sepia-mode'); }
+        function toggleSepia() { document.body.classList.toggle('sepia-mode'); document.body.classList.remove('high-contrast'); }
+
+        let currentFontSizeLevel = 100;
+        function adjustFontSize(dir) {
+            currentFontSizeLevel += dir * 10;
+            if (currentFontSizeLevel < 90) currentFontSizeLevel = 90;
+            if (currentFontSizeLevel > 150) currentFontSizeLevel = 150;
+            document.getElementById('font-size-indicator').textContent = currentFontSizeLevel + '%';
+            document.getElementById('main-content').style.fontSize = currentFontSizeLevel + '%';
+        }
+
+        function handleStartWithConsent() {
+            if (!document.getElementById('consent-check').checked) {
+                document.getElementById('consent-error').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('consent-error').classList.add('hidden');
+            userAnswers = {};
+            currentModuleIndex = 0;
+            testStartTime = Date.now();
+            localStorage.setItem('psdoi_in_progress', 'true');
+            switchView('quiz');
+            renderModule();
+        }
+
+        function resumeAssessment() {
+            switchView('quiz');
+            renderModule();
+        }
+
+        function switchView(view) {
+            window.speechSynthesis && window.speechSynthesis.cancel();
+            ['view-start', 'view-quiz', 'view-welcome', 'view-results', 'view-professional-dashboard'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById('view-' + view).classList.remove('hidden');
+            if (view === 'professional-dashboard') renderProfessionalDashboardTable();
+            window.scrollTo(0,0);
+        }
+
+        function openProfessionalPortalModal() {
+            document.getElementById('professional-modal').classList.remove('hidden');
+            const pinInput = document.getElementById('modal-prof-pin');
+            if(pinInput) {
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        }
+
+        function closeProfessionalPortalModal() {
+            document.getElementById('professional-modal').classList.add('hidden');
+        }
+
+        async function verifyProfessionalPin(event) {
+            event.preventDefault();
+            const pin = document.getElementById('modal-prof-pin').value.trim();
+            if (pin === 'Bienestar2026+') {
+                closeProfessionalPortalModal();
+                await fetchRecordsFromGoogleSheets();
+                switchView('professional-dashboard');
+            } else {
+                alert('PIN institucional incorrecto.');
+            }
+        }
+
+        function handleKeySpeechTrigger() {
+            const quizView = document.getElementById('view-quiz');
+            if (quizView.classList.contains('hidden')) return;
+
+            speechClicksCount++;
+            if (speechClickTimer) clearTimeout(speechClickTimer);
+
+            speechClickTimer = setTimeout(() => {
+                if (speechClicksCount === 1) {
+                    playCurrentModuleSpeech();
+                } else if (speechClicksCount === 2) {
+                    window.speechSynthesis && window.speechSynthesis.cancel();
+                    playCurrentModuleSpeech();
+                } else if (speechClicksCount >= 3) {
+                    window.speechSynthesis && window.speechSynthesis.cancel();
+                    if (currentModuleIndex < modulesData.length - 1) {
+                        changeModule(1);
+                    } else {
+                        proceedToRegister();
+                    }
+                }
+                speechClicksCount = 0;
+            }, 400);
+        }
+
+        function playCurrentModuleSpeech() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const mod = modulesData[currentModuleIndex];
+            let textToSpeak = `${mod.title}. `;
+            mod.questions.forEach((q, idx) => {
+                textToSpeak += `Pregunta ${idx + 1}: ${q.text} `;
+                q.options.forEach(opt => { textToSpeak += `Opción ${opt.id.toUpperCase()}: ${opt.text} `; });
+            });
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'es-CO';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function togglePauseSpeech() {
+            if (!('speechSynthesis' in window)) return;
+            if (window.speechSynthesis.speaking) {
+                if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+                else window.speechSynthesis.pause();
+            } else {
+                playCurrentModuleSpeech();
+            }
+        }
+
+        function renderModule() {
+            const mod = modulesData[currentModuleIndex];
+            document.getElementById('module-badge').textContent = `Módulo ${currentModuleIndex + 1} de 5`;
+            document.getElementById('quiz-heading').textContent = mod.title;
+            
+            const tag5 = document.getElementById('module-5-tag');
+            if (!mod.isScored) tag5.classList.remove('hidden'); else tag5.classList.add('hidden');
+
+            const progressPercent = ((currentModuleIndex + 1) / 5) * 100;
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            mod.questions.forEach((q) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4";
+
+                const qTitle = document.createElement('h3');
+                qTitle.className = "font-bold text-slate-800 text-base sm:text-lg flex items-start gap-3";
+                qTitle.innerHTML = `<span class="bg-uniminuto-50 text-uniminuto-600 px-2.5 py-1 rounded-lg text-sm border flex-shrink-0">P.${q.id}</span> <span>${q.text}</span>`;
+                questionCard.appendChild(qTitle);
+
+                if (q.visualSvg) {
+                    const svgDiv = document.createElement('div');
+                    svgDiv.className = "py-2";
+                    svgDiv.innerHTML = q.visualSvg;
+                    questionCard.appendChild(svgDiv);
+                }
+
+                const optionsList = document.createElement('div');
+                optionsList.className = "space-y-2.5 pl-0 sm:pl-10";
+
+                q.options.forEach(opt => {
+                    const isSelected = userAnswers[q.id] === opt.id;
+                    const optLabel = document.createElement('label');
+                    optLabel.className = `flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition ${isSelected ? 'border-uniminuto-500 bg-uniminuto-50 font-semibold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'}`;
+                    
+                    const inputRadio = document.createElement('input');
+                    inputRadio.type = 'radio';
+                    inputRadio.name = `question-${q.id}`;
+                    inputRadio.value = opt.id;
+                    inputRadio.checked = isSelected;
+                    inputRadio.className = 'w-4 h-4 text-uniminuto-600';
+                    inputRadio.onchange = () => {
+                        userAnswers[q.id] = opt.id;
+                        renderModule();
+                    };
+
+                    const optSpan = document.createElement('span');
+                    optSpan.className = 'text-sm';
+                    optSpan.textContent = `${opt.id.toUpperCase()}. ${opt.text}`;
+
+                    optLabel.appendChild(inputRadio);
+                    optLabel.appendChild(optSpan);
+                    optionsList.appendChild(optLabel);
+                });
+
+                questionCard.appendChild(optionsList);
+                container.appendChild(questionCard);
+            });
+
+            document.getElementById('btn-prev').disabled = (currentModuleIndex === 0);
+            if (currentModuleIndex === modulesData.length - 1) {
+                document.getElementById('btn-next').classList.add('hidden');
+                document.getElementById('btn-to-register').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+                document.getElementById('btn-to-register').classList.add('hidden');
+            }
+        }
+
+        function changeModule(direction) {
+            currentModuleIndex += direction;
+            if (currentModuleIndex < 0) currentModuleIndex = 0;
+            if (currentModuleIndex >= modulesData.length) currentModuleIndex = modulesData.length - 1;
+            renderModule();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function proceedToRegister() {
+            switchView('welcome');
+        }
+
+        function submitAssessment(event) {
+            event.preventDefault();
+            const name = document.getElementById('student-name').value.trim();
+            const age = document.getElementById('student-age').value.trim();
+            const id = document.getElementById('student-id').value.trim();
+            const program = document.getElementById('student-program').value;
+            const center = document.getElementById('acad-center').value;
+            const modality = document.getElementById('acad-modality').value;
+            const shift = document.getElementById('acad-shift').value;
+            const zone = document.getElementById('socio-zone').value;
+            const stratum = document.getElementById('socio-stratum').value;
+            const work = document.getElementById('socio-work').value;
+            const device = document.getElementById('socio-device').value;
+            const wbMental = document.getElementById('wb-mental').checked;
+            const wbPhysical = document.getElementById('wb-physical').checked;
+
+            let totalScore = 0;
+            let moduleScores = [0, 0, 0, 0];
+            modulesData.forEach((mod, modIdx) => {
+                if (mod.isScored) {
+                    let modCorrect = 0;
+                    mod.questions.forEach(q => {
+                        const sel = userAnswers[q.id];
+                        const corr = q.options.find(o => o.correct);
+                        if (sel && corr && sel === corr.id) {
+                            modCorrect++;
+                        }
+                    });
+                    const scoreForMod = modCorrect * 2;
+                    totalScore += scoreForMod;
+                    moduleScores[modIdx] = scoreForMod;
+                }
+            });
+
+            let risk = "🟢 Estándar";
+            if (totalScore < 12 || wbMental || (shift === 'Nocturna' && work.includes('completo'))) {
+                risk = "🔴 Prioritario";
+            } else if (totalScore < 18 || stratum.includes('1')) {
+                risk = "🟡 Moderado";
+            }
+
+            const newRec = {
+                id, name, age, program, center, modality, shift, zone, stratum, work, device, wbMental, wbPhysical,
+                score: totalScore, moduleScores, risk, date: new Date().toLocaleString('es-CO')
+            };
+
+            localRecords.unshift(newRec);
+            localStorage.setItem('psdoi_prof_records', JSON.stringify(localRecords));
+            localStorage.removeItem('psdoi_in_progress');
+            saveRecordToGoogleSheets(newRec);
+
+            switchView('results');
+            document.getElementById('res-name').textContent = name;
+            document.getElementById('res-age-id').textContent = `${age} años / ID: ${id}`;
+            document.getElementById('res-program').textContent = `${program} • ${modality} (${shift}) • Sede: ${center}`;
+
+            let recHtml = `<p>¡Hola, <strong>${name}</strong>! Has completado el screening DUA en la sede ${center} para el programa de <strong>${program}</strong>.</p>`;
+            if (totalScore >= 18) {
+                recHtml += `<p><strong>Destreza Destacada:</strong> Excelente dominio del razonamiento analítico. Te sugerimos participar en semilleros de investigación.</p>`;
+            } else if (totalScore >= 10) {
+                recHtml += `<p><strong>Competencia Consolidada:</strong> Buen desempeño general con áreas específicas de mejora. Te recomendamos usar organizadores gráficos y visitar el Centro de Escritura UNIMINUTO.</p>`;
+            } else {
+                recHtml += `<p><strong>Área de Oportunidad y Andamiaje:</strong> Se han detectado oportunidades de apoyo metodológico y adaptativo. Te invitamos a contactar el Área Accesible e Incluyente y aprovechar los cursos nivelatorios.</p>`;
+            }
+            document.getElementById('student-recommendations-text').innerHTML = recHtml;
+        }
+
+        function renderProfessionalDashboardTable() {
+            const tbody = document.getElementById('dashboard-table-body');
+            tbody.innerHTML = '';
+
+            const fCenter = document.getElementById('filter-center').value;
+            const fMod = document.getElementById('filter-modality').value;
+            const fShift = document.getElementById('filter-shift').value;
+            const fRisk = document.getElementById('filter-risk').value;
+
+            const filtered = localRecords.filter(r => {
+                return (fCenter === 'ALL' || r.center === fCenter) &&
+                       (fMod === 'ALL' || r.modality === fMod) &&
+                       (fShift === 'ALL' || r.shift === fShift) &&
+                       (fRisk === 'ALL' || (r.risk && r.risk.includes(fRisk.replace(/[^a-zA-Z]/g, ''))));
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No hay registros institucionales que coincidan con los filtros.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((rec, index) => {
+                const tr = document.createElement('tr');
+                let bgClass = "bg-emerald-50/50";
+                let riskBadge = '<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">🟢 Estándar</span>';
+                if (rec.risk && rec.risk.includes('Prioritario')) {
+                    bgClass = "bg-rose-50/60";
+                    riskBadge = '<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded text-[10px]">🔴 Prioritario</span>';
+                } else if (rec.risk && rec.risk.includes('Moderado')) {
+                    bgClass = "bg-amber-50/60";
+                    riskBadge = '<span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded text-[10px]">🟡 Moderado</span>';
+                }
+                tr.className = `${bgClass} hover:opacity-90 transition`;
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-slate-800">${rec.name}</div>
+                        <div class="text-[10px] text-slate-500">ID: ${rec.id}</div>
+                    </td>
+                    <td class="p-3 text-xs">
+                        <div class="font-bold">${rec.center}</div>
+                        <div>${rec.program} • ${rec.modality}</div>
+                    </td>
+                    <td class="p-3 text-center font-black text-uniminuto-600">${rec.score || 0} / 24</td>
+                    <td class="p-3">${riskBadge}</td>
+                    <td class="p-3 text-center flex items-center justify-center gap-2">
+                        <button onclick="openStudentReportModal(${index})" class="px-3 py-1.5 bg-uniminuto-600 text-white font-bold rounded-lg text-xs shadow">Concepto PIAR / PDF</button>
+                        <button onclick="openDeleteModal(${index})" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs shadow" title="Eliminar registro">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openStudentReportModal(index) {
+            const rec = localRecords[index];
+            if (!rec) return;
+
+            let theoText = "";
+            let adjustList = "";
+            let vocationalAlert = "";
+
+            const mathScore = (rec.moduleScores && rec.moduleScores[2] !== undefined) ? rec.moduleScores[2] : 6;
+            const isEngineering = rec.program.toLowerCase().includes('ingeniería') || rec.program.toLowerCase().includes('contaduría') || rec.program.toLowerCase().includes('administración');
+
+            if (isEngineering && mathScore <= 2) {
+                vocationalAlert = `
+                    <div class="p-3 bg-rose-100 border border-rose-300 rounded-xl text-xs text-rose-950 space-y-1">
+                        <p class="font-bold uppercase tracking-wider">⚠️ Alerta Vocacional y de Saberes Previos:</p>
+                        <p>El estudiante aspira al programa de <strong>${rec.program}</strong> pero registra un puntaje crítico en razonamiento cuantitativo (${mathScore}/6). Se sugiere fuertemente activar un <strong>curso nivelatorio de saberes previos en matemáticas</strong> e iniciar tutorías de refuerzo metodológico antes de cursar materias de ciencias básicas.</p>
+                    </div>
+                `;
+            }
+
+            if (rec.score >= 18) {
+                theoText = "Procesamiento eficiente y autonomía analítica consolidada (Piaget; CAST, 2018 - DUA; ONU, 2006). Sin requerimiento de refuerzo base (Decreto 1421 de 2017).";
+                adjustList = "<li><strong>General:</strong> Sin requerimiento de refuerzo cognitivo base. Ajustes limitados exclusivamente a accesibilidad de formatos.</li>";
+            } else if (rec.score >= 10) {
+                theoText = "Conflicto cognitivo y BAP metodológicas (Echeita & Ainscow, 2011; Piaget, 1970). Andamiaje parcial y PIAR (Decreto 1421 de 2017; MEN, 2017).";
+                adjustList = "<li><strong>Estructura Escrita:</strong> Flexibilización parcial y mapas conceptuales de apoyo.</li><li><strong>Andamiaje:</strong> Guías complementarias en módulos con menor puntaje.</li>";
+            } else {
+                theoText = "Modelo Social y Sobrecarga Cognitiva (Palacios, 2008; ONU Obs. 4). Obligatoriedad de PIAR y derivación a Bienestar.";
+                adjustList = "<li><strong>Fragmentación:</strong> Consignas evaluativas divididas en partes secuenciales.</li><li><strong>Alternativas:</strong> Sustentaciones orales o mapas conceptuales.</li>";
+            }
+
+            document.getElementById('modal-report-content').innerHTML = `
+                <div class="bg-slate-50 p-4 rounded-xl border grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                    <div><b>Estudiante:</b> ${rec.name}</div>
+                    <div><b>Edad / ID:</b> ${rec.age} / ${rec.id}</div>
+                    <div><b>Programa:</b> ${rec.program}</div>
+                    <div><b>Sede:</b> ${rec.center} (${rec.modality})</div>
+                </div>
+                ${vocationalAlert}
+                <div class="p-6 rounded-2xl border-2 border-uniminuto-500 bg-white space-y-4 shadow-sm">
+                    <h3 class="font-extrabold text-slate-900 text-lg">Concepto Técnico PIAR - Puntaje: ${rec.score}/24</h3>
+                    <div class="p-4 bg-slate-50 rounded-xl border text-xs space-y-1">
+                        <p class="font-bold uppercase tracking-wider text-uniminuto-700">Fundamentación Teórica APA y Normativa:</p>
+                        <p>${theoText}</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-900 mb-1">Recomendaciones Específicas para el Ajuste Razonable:</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-slate-700">${adjustList}</ul>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-student-report').classList.remove('hidden');
+        }
+
+        function closeStudentReportModal() {
+            document.getElementById('modal-student-report').classList.add('hidden');
+        }
+
+        function printPiarConcept() {
+            document.body.classList.add('printing-piar');
+            window.print();
+            setTimeout(() => { document.body.classList.remove('printing-piar'); }, 500);
+        }
+
+        function printCleanTestPDF() {
+            document.body.classList.add('printing-clean-test');
+            window.print();
+            setTimeout(() => { document.body.classList.remove('printing-clean-test'); }, 500);
+        }
+
+        function openDeleteModal(index) {
+            document.getElementById('delete-record-index').value = index;
+            document.getElementById('del-prof-name').value = '';
+            document.getElementById('del-reason').value = '';
+            document.getElementById('del-password').value = '';
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        function confirmDeleteRecord(event) {
+            event.preventDefault();
+            const index = parseInt(document.getElementById('delete-record-index').value);
+            const profName = document.getElementById('del-prof-name').value.trim();
+            const reason = document.getElementById('del-reason').value.trim();
+            const password = document.getElementById('del-password').value.trim();
+
+            if (password !== 'Bienestar2026+') {
+                alert('Contraseña institucional incorrecta.');
+                return;
+            }
+
+            if (isNaN(index) || !localRecords[index]) return;
+
+            const deleted = localRecords.splice(index, 1)[0];
+            localStorage.setItem('psdoi_prof_records', JSON.stringify(localRecords));
+            closeDeleteModal();
+            renderProfessionalDashboardTable();
+            alert(`Registro de ${deleted.name} eliminado exitosamente por ${profName}.\nMotivo: "${reason}"`);
+        }
+
+        function openAnalyticsModal() {
+            const total = localRecords.length;
+            const mental = localRecords.filter(r => r.wbMental).length;
+            const night = localRecords.filter(r => r.shift === 'Nocturna' || r.work?.includes('completo')).length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-mental').textContent = total > 0 ? `${Math.round((mental / total) * 100)}%` : '0%';
+            document.getElementById('stat-night').textContent = total > 0 ? `${Math.round((night / total) * 100)}%` : '0%';
+            document.getElementById('analytics-modal').classList.remove('hidden');
+        }
+
+        function exportAllToExcel() {
+            const csvRows = [
+                ['"CONSOLIDADO INSTITUCIONAL PIAR - PSDOI UNIMINUTO"'],
+                ['"Fecha","Estudiante","ID","Programa","Sede","Modalidad","Jornada","Estrato","Puntaje","Semáforo","Salud Mental","Deporte/Cultura"']
+            ];
+            localRecords.forEach(r => {
+                csvRows.push([
+                    `"${r.date || ''}"`,
+                    `"${r.name || ''}"`,
+                    `"${r.id || ''}"`,
+                    `"${r.program || ''}"`,
+                    `"${r.center || ''}"`,
+                    `"${r.modality || ''}"`,
+                    `"${r.shift || ''}"`,
+                    `"${r.stratum || ''}"`,
+                    `"${r.score || 0}/24"`,
+                    `"${r.risk || ''}"`,
+                    `"${r.wbMental ? 'Sí' : 'No'}"`,
+                    `"${r.wbPhysical ? 'Sí' : 'No'}"`
+                ]);
+            });
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.join(",")).join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Consolidado_PIAR_UNIMINUTO.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function restartAssessment() {
+            userAnswers = {};
+            currentModuleIndex = 0;
+            localStorage.removeItem('psdoi_in_progress');
+            switchView('start');
+        }
+    </script>
+</body>
+</html>
